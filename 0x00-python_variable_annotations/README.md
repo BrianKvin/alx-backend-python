@@ -21,6 +21,7 @@ Resources
 
 -   [Python 3 typing documentation](https://alx-intranet.hbtn.io/rltoken/5j0OtdWh36_HVAHKJX2gaA "Python 3 typing documentation")
 -   [MyPy cheat sheet](https://alx-intranet.hbtn.io/rltoken/Eud-nrUG7x3iT6JD2Sas-g "MyPy cheat sheet")
+-   [0x00. Python - Variable Annotations]("https://shazaali.substack.com/p/0x00-python-variable-annotations")
 
 Learning Objectives
 -------------------

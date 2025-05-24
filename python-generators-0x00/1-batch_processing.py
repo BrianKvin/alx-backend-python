@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-#!/usr/bin/python3
 import mysql.connector
 from seed import connect_to_prodev
 
@@ -32,13 +31,18 @@ def batch_processing(batch_size):
     Processes batches of users, filtering those over 25 years old.
     Args:
         batch_size (int): Number of rows per batch.
+    Returns:
+        List of dictionaries containing users over 25 years old.
     """
+    filtered_users = []
     try:
         # Loop 2: Iterate over batches from the generator
         for batch in stream_users_in_batches(batch_size):
             # Loop 3: Filter users in the batch
             for user in batch:
                 if user['age'] > 25:
-                    print(user)
+                    filtered_users.append(user)
+        return filtered_users  # Return the list of filtered users
     except Exception as err:
         print(f"Error processing batches: {err}")
+        return []  # Return empty list on error

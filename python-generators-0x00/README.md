@@ -432,6 +432,144 @@ Average age of users: 45.67
 
 ---
 
+
+---
+
+# 🧠 Python Quiz: Intermediate Concepts
+
+This README documents quiz questions and answers covering intermediate Python topics such as decorators, context managers, asynchronous programming, generators, and memory optimization techniques.
+
+---
+
+## ✅ Quiz Completion
+
+Congratulations! You've successfully completed the quiz. Review the questions and answers below for quick reference and revision.
+
+---
+
+## 📋 Quiz Questions and Options
+
+### Question 0
+
+**What does the `@contextmanager` decorator do in Python?**
+
+* [ ] It creates a class-based context manager
+* [ ] It provides a shortcut for defining decorators
+* [ ] It converts a function into an async function
+* [x] It converts a generator function into a context manager
+
+---
+
+### Question 1
+
+**How can a Python decorator handle functions with different arguments?**
+
+* [ ] Use a specific argument signature for the wrapper function
+* [ ] Modify the original function to match the wrapper signature
+* [x] Use `*args` and `**kwargs` in the wrapper function
+* [ ] Decorators cannot handle functions with arguments
+
+---
+
+### Question 2
+
+**What is the main difference between Python’s `range()` in Python 3 and `xrange()` in Python 2?**
+
+* [ ] `range()` returns a generator while `xrange()` returns a list
+* [ ] `xrange()` is only available in Python 3
+* [ ] `xrange()` is slower than `range()`
+* [x] `range()` returns an immutable sequence, while `xrange()` returns a generator
+
+---
+
+### Question 3
+
+**In an asynchronous Python program, what does `asyncio.run()` do?**
+
+* [x] Runs the given coroutine and blocks until it is complete
+* [ ] Starts an event loop without blocking
+* [ ] Converts a function into a coroutine
+* [ ] Schedules a coroutine to run later
+
+---
+
+### Question 4
+
+**Which method is essential for creating a context manager using a class?**
+
+* [ ] `__call__`
+* [x] `__enter__` and `__exit__`
+* [ ] `__new__`
+* [ ] `__del__`
+
+---
+
+### Question 5
+
+**What is a key advantage of using a generator function over returning a list in Python?**
+
+* [x] Reduces memory usage
+* [ ] Ensures type safety
+* [ ] Increases execution speed
+* [ ] Simplifies code structure
+
+---
+
+### Question 6
+
+**Which of the following best describes a Python decorator?**
+
+* [ ] A function that replaces another function
+* [ ] A method for optimizing code execution
+* [x] A function that wraps another function to modify its behavior
+* [ ] A way to repeat the execution of a function
+
+---
+
+### Question 7
+
+**Which statement about generator expressions is true?**
+
+* [ ] They cannot be composed with other generators
+* [ ] They return lists that are lazily evaluated
+* [ ] They always consume more memory than list comprehensions
+* [x] They are syntactically similar to list comprehensions but use parentheses instead of square brackets
+
+---
+
+### Question 8
+
+**How can you turn a list comprehension into a generator expression?**
+
+* [ ] Use curly braces `{}` instead of square brackets
+* [ ] Add a `yield` statement inside the comprehension
+* [ ] Use double square brackets `[[ ]]`
+* [x] Use parentheses `()` instead of square brackets
+
+---
+
+### Question 9
+
+**What happens if the `__exit__` method of a context manager returns `True` after an exception is raised?**
+
+* [ ] The exception is re-raised
+* [ ] The context manager is reset to its initial state
+* [ ] The program terminates
+* [x] The exception is suppressed
+
+---
+
+## 📚 Topics Covered
+
+* Context Managers
+* Decorators
+* Asynchronous Programming
+* Generator Functions and Expressions
+* Memory Efficiency
+* Python 2 vs 3 Differences
+
+---
+
 ## 📚 Additional Resources
 
 * [Python Generators – Real Python](https://realpython.com/introduction-to-python-generators/)

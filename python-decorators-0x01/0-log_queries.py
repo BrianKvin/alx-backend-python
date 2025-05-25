@@ -32,9 +32,15 @@ users = fetch_all_users(query="SELECT * FROM users")
 import sqlite3
 import functools
 import logging
+from datetime import datetime
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+'''logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')'''
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'  # Custom datetime format
+)
 
 def log_queries(func):
     @functools.wraps(func)

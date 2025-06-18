@@ -1,4 +1,3 @@
-# messaging_app/chats/serializers.py
 from rest_framework import serializers
 from .models import User, Conversation, Message, MessageReadStatus
 

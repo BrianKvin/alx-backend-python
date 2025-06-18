@@ -85,6 +85,7 @@ class MessageCreateSerializer(serializers.ModelSerializer):
     """
     Simplified serializer for creating messages
     """
+    message_body = serializers.CharField(required=True, max_length=1000)
     class Meta:
         model = Message
         fields = ['conversation', 'message_body']

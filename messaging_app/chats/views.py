@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.db.models import Q, Prefetch
+
+from chats.permissions import IsOwnerOrParticipant
 from .models import User, Conversation, Message
 from .serializers import (
     UserSerializer,
@@ -24,7 +26,7 @@ class UserViewSet(viewsets.ModelViewSet):
     ViewSet for managing users
     """
     queryset = User.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsOwnerOrParticipant]    
     lookup_field = 'user_id'
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     search_fields = ['username', 'email', 'first_name', 'last_name']
@@ -39,7 +41,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
     """
     ViewSet for managing conversations
     """
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsOwnerOrParticipant]
     lookup_field = 'conversation_id'
     filter_backends = [DjangoFilterBackend] 
     filterset_class = ConversationFilter 
@@ -140,7 +142,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     """
     ViewSet for managing messages
     """
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsOwnerOrParticipant]
     lookup_field = 'message_id'
     filter_backends = [DjangoFilterBackend] # Add this
     filterset_class = MessageFilter # Add this

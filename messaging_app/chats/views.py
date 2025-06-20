@@ -1,5 +1,5 @@
-# chats/views.py
 from rest_framework import viewsets, status
+from rest_framework import filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -26,6 +26,8 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated]
     lookup_field = 'user_id'
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    search_fields = ['username', 'email', 'first_name', 'last_name']
 
     def get_serializer_class(self):
         if self.action == 'retrieve':

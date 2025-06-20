@@ -19,6 +19,10 @@ ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = 'chats.User'
 
+LOG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'logs')
+if not os.path.exists(LOG_DIR):
+    os.makedirs(LOG_DIR)
+
 
 # Application definition
 
@@ -47,7 +51,20 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'messaging_app.chats.middleware.RequestLoggingMiddleware', # custom middleware
+    # 1. Request Logging: Needs user to be authenticated, so after AuthenticationMiddleware
+    'messaging_app.chats.middleware.RequestLoggingMiddleware',
+    
+    # 2. Time Restriction: Can be relatively early, before complex view logic
+    #    Does not strictly depend on authenticated user, but works fine here.
+    'messaging_app.chats.middleware.RestrictAccessByTimeMiddleware',
+    
+    # 3. Offensive Language (Rate Limiting):
+    #    Applied to POST requests, needs to run before the view processes the message.
+    'messaging_app.chats.middleware.OffensiveLanguageMiddleware',
+    
+    # 4. Role Permission: Needs user to be authenticated and roles checked,
+    #    so it must be after AuthenticationMiddleware.
+    'messaging_app.chats.middleware.RolePermissionMiddleware',
 ]
 
 ROOT_URLCONF = 'messaging_app.urls'
@@ -238,6 +255,3 @@ LOGGING = {
     },
 }
 
-LOG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'logs')
-if not os.path.exists(LOG_DIR):
-    os.makedirs(LOG_DIR)

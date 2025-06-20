@@ -1,5 +1,6 @@
 from datetime import timedelta
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,10 +42,12 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware', # middleware
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'messaging_app.chats.middleware.RequestLoggingMiddleware', # custom middleware
 ]
 
 ROOT_URLCONF = 'messaging_app.urls'
@@ -175,3 +178,66 @@ SIMPLE_JWT = {
     # 'TOKEN_SLIDING_SERIALIZER': 'rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer',
     # 'TOKEN_SLIDING_REFRESH_SERIALIZER': 'rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer',
 }
+
+# Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False, # Keep existing loggers intact
+
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+        'request_logger': { # Custom formatter for your request logger
+            'format': '{message}', # Only the message provided by your middleware
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'file': { # Handler to write logs to a file
+            'class': 'logging.handlers.RotatingFileHandler', # Use RotatingFileHandler for production
+            'filename': 'logs/requests.log', # Path to your log file
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,            # Keep 5 backup log files
+            'formatter': 'request_logger', # Use your custom formatter
+        },
+        'django_file': { # Example for general Django logs
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'logs/django.log',
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 5,
+            'formatter': 'verbose',
+        }
+    },
+    'loggers': {
+        # This logger matches the name used in your middleware (`logger = logging.getLogger(__name__)`)
+        # which will resolve to 'messaging_app.chats.middleware'
+        'messaging_app.chats.middleware': {
+            'handlers': ['file'], # Send logs to the 'file' handler
+            'level': 'INFO',     # Only log INFO level messages and above
+            'propagate': False,  # Prevent logs from propagating to parent loggers (e.g., django)
+        },
+        'django': { # General Django logger
+            'handlers': ['console', 'django_file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+    'root': { # Root logger for anything not specifically configured
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+}
+
+LOG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'logs')
+if not os.path.exists(LOG_DIR):
+    os.makedirs(LOG_DIR)

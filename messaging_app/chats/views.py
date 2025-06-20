@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.db.models import Q, Prefetch
 
+from chats.pagination import MessagePagination
 from chats.permissions import IsParticipantInConversation, IsMessageSenderOrParticipant
 from .models import User, Conversation, Message
 from .serializers import (
@@ -46,16 +47,40 @@ class ConversationViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend] 
     filterset_class = ConversationFilter 
 
+    queryset = Conversation.objects.all()
+    serializer_class = ConversationSerializer
+
     def get_queryset(self):
         """
-        Filter conversations to only show those the user is participating in
+        Filter conversations to only show those the user is participating in.
+        Prefetches all messages for 'retrieve' (detail) action and
+        the latest 10 messages for 'list' action.
         """
-        return Conversation.objects.filter(
-            participants=self.request.user
-        ).prefetch_related(
-            'participants',
-            Prefetch('messages', queryset=Message.objects.order_by('-sent_at')[:10])
-        ).distinct()
+        user = self.request.user
+
+        if not user.is_authenticated:
+            return Conversation.objects.none()
+
+        queryset = Conversation.objects.filter(
+            participants=user
+        ).prefetch_related('participants').distinct()
+
+        # Adjust prefetching based on the action
+        if self.action == 'retrieve':
+            # For the detail view of a single conversation, prefetch ALL messages
+            # Order by 'sent_at' in ascending order for chronological display in detail view
+            queryset = queryset.prefetch_related(
+                Prefetch('messages', queryset=Message.objects.order_by('sent_at'))
+            )
+        else:
+            # For list view (or any other action where you don't need all messages),
+            # prefetch only the latest 10 messages for a snippet.
+            # Order by 'sent_at' in descending order to get the latest.
+            queryset = queryset.prefetch_related(
+                Prefetch('messages', queryset=Message.objects.order_by('-sent_at')[:10])
+            )
+
+        return queryset
 
     def get_serializer_class(self):
         if self.action == 'create':
@@ -144,16 +169,24 @@ class MessageViewSet(viewsets.ModelViewSet):
     """
     permission_classes = [IsAuthenticated, IsMessageSenderOrParticipant]
     lookup_field = 'message_id'
-    filter_backends = [DjangoFilterBackend] # Add this
-    filterset_class = MessageFilter # Add this
+    filter_backends = [DjangoFilterBackend] 
+    filterset_class = MessageFilter
+
+    queryset = Message.objects.all().order_by('-sent_at') 
+    serializer_class = MessageSerializer
+    pagination_class = MessagePagination
 
     def get_queryset(self):
         """
         Filter messages to only show those in conversations the user participates in
         """
-        return Message.objects.filter(
-            conversation__participants=self.request.user
-        ).select_related('sender', 'conversation').distinct()
+        if self.request.user.is_authenticated:
+            user_conversations = Conversation.objects.filter(participants=self.request.user)
+            return Message.objects.filter(conversation__in=user_conversations).order_by('-sent_at')
+        return Message.objects.none()
+    
+    def perform_create(self, serializer):
+        serializer.save(sender=self.request.user)
 
     def get_serializer_class(self):
         if self.action == 'create':
@@ -169,7 +202,6 @@ class MessageViewSet(viewsets.ModelViewSet):
 
         conversation = serializer.validated_data['conversation']
 
-        # Check if user is a participant in the conversation
         if not conversation.participants.filter(user_id=request.user.user_id).exists():
             return Response(
                 {'error': 'You are not a participant in this conversation'},

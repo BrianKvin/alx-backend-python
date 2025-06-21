@@ -29,6 +29,8 @@ class CustomHeaderMiddleware:
         # Modify the response
         response['X-Custom-Header'] = 'Value'
         return response
+```
+
 2. Signals: Event-Driven Architecture
 Django signals enable decoupled communication by allowing senders to notify receivers when specific actions occur.
 Key Concepts
@@ -90,7 +92,9 @@ cache.set('my_key', 'my_value', timeout=60)
 
 # Retrieve a cached value
 value = cache.get('my_key')
-Additional Resources
+
+
+## Additional Resources
 Middleware:
 Django Documentation: Middleware
 Django Middleware Video
@@ -102,4 +106,3 @@ Django Documentation: Queries
 Caching:
 Caching with Django
 
-```

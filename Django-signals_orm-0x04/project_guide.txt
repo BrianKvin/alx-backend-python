@@ -1,0 +1,134 @@
+# Django Messaging App with Signals and Advanced ORM
+
+This project implements a comprehensive Django messaging application that demonstrates the use of Django signals, advanced ORM techniques, and view caching. It fulfills all the requirements specified in the Django-signals_orm-0x04 tasks.
+
+## Features Implemented
+
+### ✅ Task 0: Signals for User Notifications
+- **Message Model**: Complete with sender, receiver, content, timestamp fields
+- **Django Signals**: Automatic notification creation using `post_save` signal
+- **Notification Model**: Stores notifications linked to User and Message models
+- **Auto-notification**: Users automatically receive notifications for new messages
+
+### ✅ Task 1: Signal for Logging Message Edits
+- **Edit Tracking**: `edited` field in Message model
+- **Pre-save Signal**: Logs old content before updates using `pre_save` signal
+- **MessageHistory Model**: Stores edit history with old content and timestamps
+- **UI Integration**: View message edit history in the interface
+
+### ✅ Task 2: Signals for Deleting User-Related Data
+- **User Deletion View**: Clean account deletion functionality
+- **Post-delete Signal**: Automatic cleanup of related data using `post_delete` signal
+- **Cascade Handling**: Proper foreign key constraint management
+- **Complete Cleanup**: Messages, notifications, and histories are removed
+
+### ✅ Task 3: Advanced ORM Techniques for Threaded Conversations
+- **Threaded Messages**: Self-referential foreign key for replies
+- **Query Optimization**: `prefetch_related` and `select_related` usage
+- **Recursive Queries**: Fetch all replies in threaded format
+- **Efficient Display**: Optimized database queries for conversation views
+
+### ✅ Task 4: Custom ORM Manager for Unread Messages
+- **Read Status**: `read` boolean field in Message model
+- **Custom Manager**: `UnreadMessagesManager` for filtering unread messages
+- **Query Optimization**: Uses `.only()` to retrieve necessary fields only
+- **User-specific Filtering**: Efficient unread message queries per user
+
+### ✅ Task 5: Basic View Cache Implementation
+- **Cache Configuration**: LocMemCache backend in settings
+- **View Caching**: `@cache_page(60)` decorator on message views
+- **60-second Timeout**: As specified in requirements
+- **Performance Optimization**: Reduced database queries for cached views
+
+## Project Structure
+
+```
+Django-signals_orm-0x04/
+├── messaging_app/
+│   ├── messaging_app/
+│   │   ├── __init__.py
+│   │   ├── settings.py          # Cache configuration
+│   │   ├── urls.py
+│   │   └── wsgi.py
+│   ├── messaging/
+│   │   ├── __init__.py
+│   │   ├── models.py            # Message, Notification, MessageHistory models
+│   │   ├── signals.py           # Django signals implementation
+│   │   ├── apps.py              # App configuration with signal imports
+│   │   ├── admin.py             # Admin interface configuration
+│   │   ├── tests.py             # Comprehensive test suite
+│   │   └── management/
+│   │       └── commands/
+│   │           └── setup_test_data.py
+│   ├── chats/
+│   │   ├── __init__.py
+│   │   ├── views.py             # Views with caching and ORM optimization
+│   │   └── urls.py
+│   └── templates/
+│       ├── base.html
+│       └── chats/
+│           ├── conversation_list.html
+│           └── conversation_detail.html
+```
+
+## Installation and Setup
+
+### 1. Clone the Repository
+```bash
+git clone <repository-url>
+cd Django-signals_orm-0x04
+```
+
+### 2. Create Virtual Environment
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+### 3. Install Dependencies
+```bash
+pip install django
+```
+
+### 4. Project Setup
+```bash
+# Create the Django project
+django-admin startproject messaging_app
+cd messaging_app
+
+# Create the apps
+python manage.py startapp messaging
+python manage.py startapp chats
+```
+
+### 5. Copy the Implementation Files
+Copy all the provided code files to their respective locations in the project structure.
+
+### 6. Configure Django Settings
+Make sure your `INSTALLED_APPS` in `settings.py` includes:
+```python
+INSTALLED_APPS = [
+    # ... default apps
+    'messaging',
+    'chats',
+]
+```
+
+### 7. Database Migration
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### 8. Create Superuser (Optional)
+```bash
+python manage.py createsuperuser
+```
+
+### 9. Load Test Data
+```bash
+python manage.py setup_test_data --users 5 --messages 20
+```
+
+### 10. Run the Server
+```bash

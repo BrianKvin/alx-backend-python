@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Q, Prefetch
 
 from chats.pagination import MessagePagination
-from chats.permissions import IsParticipantInConversation, IsMessageSenderOrParticipant
+from chats.permissions import IsParticipantOfConversation, IsMessageSenderOrParticipant
 from .models import User, Conversation, Message
 from .serializers import (
     UserSerializer,
@@ -19,7 +19,7 @@ from .serializers import (
     MessageCreateSerializer
 )
 from django_filters.rest_framework import DjangoFilterBackend 
-from .filters import ConversationFilter, MessageFilter 
+from .filters import MessageFilter, ConversationFilter 
 from django.db import models 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -42,7 +42,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
     """
     ViewSet for managing conversations
     """
-    permission_classes = [IsAuthenticated, IsParticipantInConversation]
+    permission_classes = [IsAuthenticated, IsParticipantOfConversation]
     lookup_field = 'conversation_id'
     filter_backends = [DjangoFilterBackend] 
     filterset_class = ConversationFilter 

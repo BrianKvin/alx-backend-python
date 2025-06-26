@@ -1,6 +1,6 @@
 import django_filters
 from django.db.models import Q # For combining queries
-from .models import Message
+from .models import Message, Conversation
 from django.contrib.auth import get_user_model
 
 User = get_user_model() 
@@ -50,3 +50,10 @@ class MessageFilter(django_filters.FilterSet):
             # Filter messages that belong to these conversations
             return queryset.filter(conversation__in=conversations_with_both).distinct()
         return queryset.none() 
+
+class ConversationFilter(django_filters.FilterSet):
+    participant = django_filters.NumberFilter(field_name='participants__user_id')
+
+    class Meta:
+        model = Conversation
+        fields = ['participant']

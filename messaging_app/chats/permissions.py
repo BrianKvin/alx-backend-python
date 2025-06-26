@@ -38,3 +38,17 @@ class IsParticipantOfConversation(permissions.BasePermission):
 
         # Fallback for other objects if necessary, or deny by default
         return False
+
+class IsMessageSenderOrParticipant(permissions.BasePermission):
+    """
+    Custom permission to allow only the sender of a message or a participant
+    in the conversation to access/modify the message.
+    """
+    message = "You must be the sender or a participant in the conversation."
+
+    def has_object_permission(self, request, view, obj):
+        # obj should be a Message instance
+        return (
+            hasattr(obj, 'sender') and request.user == obj.sender or
+            hasattr(obj, 'conversation') and request.user in obj.conversation.participants.all()
+        )

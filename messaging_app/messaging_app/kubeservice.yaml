@@ -1,0 +1,96 @@
+# Production Service - Initially points to blue deployment
+apiVersion: v1
+kind: Service
+metadata:
+  name: django-messaging-service
+  labels:
+    app: django-messaging-app
+    service-type: production
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8000
+    protocol: TCP
+    name: http
+  selector:
+    app: django-messaging-app
+    version: blue  # Initially points to blue deployment
+
+---
+# Blue Service - Direct access to blue deployment
+apiVersion: v1
+kind: Service
+metadata:
+  name: django-messaging-service-blue
+  labels:
+    app: django-messaging-app
+    service-type: blue
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8000
+    protocol: TCP
+    name: http
+  selector:
+    app: django-messaging-app
+    version: blue
+
+---
+# Green Service - Direct access to green deployment
+apiVersion: v1
+kind: Service
+metadata:
+  name: django-messaging-service-green
+  labels:
+    app: django-messaging-app
+    service-type: green
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8000
+    protocol: TCP
+    name: http
+  selector:
+    app: django-messaging-app
+    version: green
+
+---
+# LoadBalancer Service for external access (optional)
+apiVersion: v1
+kind: Service
+metadata:
+  name: django-messaging-external
+  labels:
+    app: django-messaging-app
+    service-type: external
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8000
+    protocol: TCP
+    name: http
+  selector:
+    app: django-messaging-app
+    version: blue  # Initially points to blue deployment
+
+---
+# Canary Service - For gradual traffic switching (optional)
+apiVersion: v1
+kind: Service
+metadata:
+  name: django-messaging-canary
+  labels:
+    app: django-messaging-app
+    service-type: canary
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8000
+    protocol: TCP
+    name: http
+  # No version selector - can be used with ingress for percentage-based routing

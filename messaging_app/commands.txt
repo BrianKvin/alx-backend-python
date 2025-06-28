@@ -1,0 +1,55 @@
+# Commands used to set up Kubernetes Ingress for Django Messaging App
+
+# 1. Enable Nginx Ingress Controller in Minikube
+minikube addons enable ingress
+
+# 2. Verify Ingress Controller is running
+kubectl get pods -n ingress-nginx
+
+# 3. Apply the Ingress configuration
+kubectl apply -f ingress.yaml
+
+# 4. Verify Ingress resource is created
+kubectl get ingress
+
+# 5. Describe Ingress for detailed information
+kubectl describe ingress django-messaging-ingress
+
+# 6. Get Minikube IP for local testing
+minikube ip
+
+# 7. Add entries to /etc/hosts for local domain testing
+# Replace <MINIKUBE_IP> with actual minikube IP
+echo "<MINIKUBE_IP> django-messaging.local" | sudo tee -a /etc/hosts
+echo "<MINIKUBE_IP> api.django-messaging.local" | sudo tee -a /etc/hosts
+echo "<MINIKUBE_IP> dev.django-messaging.local" | sudo tee -a /etc/hosts
+echo "<MINIKUBE_IP> www.django-messaging.local" | sudo tee -a /etc/hosts
+
+# 8. Test the Ingress endpoints
+curl -H "Host: django-messaging.local" http://<MINIKUBE_IP>/
+curl -H "Host: api.django-messaging.local" http://<MINIKUBE_IP>/api/
+curl -H "Host: django-messaging.local" http://<MINIKUBE_IP>/admin/
+
+# 9. Alternative: Use minikube tunnel for LoadBalancer access
+minikube tunnel
+
+# 10. Monitor Ingress Controller logs
+kubectl logs -n ingress-nginx deployment/ingress-nginx-controller
+
+# 11. Check Ingress Controller service
+kubectl get service -n ingress-nginx
+
+# 12. Delete Ingress (if needed)
+kubectl delete -f ingress.yaml
+
+# 13. Check all ingresses in the cluster
+kubectl get ingress --all-namespaces
+
+# 14. Port forward for testing (alternative method)
+kubectl port-forward -n ingress-nginx service/ingress-nginx-controller 8080:80
+
+# 15. Test with browser or curl after /etc/hosts setup
+# http://django-messaging.local/
+# http://api.django-messaging.local/
+# http://django-messaging.local/api/
+# http://django-messaging.local/admin/

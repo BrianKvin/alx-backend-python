@@ -8,6 +8,11 @@ metadata:
     environment: production
 spec:
   replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: django-messaging-app
@@ -21,7 +26,7 @@ spec:
     spec:
       containers:
       - name: django-messaging-app
-        image: django-messaging-app:v1
+        image: django-messaging-app:2.0
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8000
@@ -125,7 +130,3 @@ spec:
   resources:
     requests:
       storage: 500Mi
-
-
-
-

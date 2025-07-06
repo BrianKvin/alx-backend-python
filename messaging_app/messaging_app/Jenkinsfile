@@ -21,15 +21,15 @@ pipeline {
         stage('Setup Python Environment') {
             steps {
                 script {
-                    // Change to messaging_app directory
+                    // Change to messaging_app directory and install dependencies
                     dir('messaging_app') {
-                        // Install Python dependencies
+                        // Install Python dependencies from messaging_app/requirements.txt
                         sh '''
                             python3 -m venv venv
                             . venv/bin/activate
-                            pip install --upgrade pip
-                            pip install -r requirements.txt
-                            pip install pytest pytest-django pytest-cov
+                            pip3 install --upgrade pip
+                            pip3 install -r messaging_app/requirements.txt
+                            pip3 install pytest pytest-django pytest-cov flake8
                         '''
                     }
                 }
